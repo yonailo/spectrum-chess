@@ -1,12 +1,14 @@
-Check 4BFEDF5E
+Check 32E88F1A
 Auto 8224
 
 # Run-time Variables
 
-Var y: Num = 14
-Var x: Num = 14
+Var y: Num = 15
+Var x: Num = 15
+Var turn: Num = 1
+Var findex: Num = 1
 Var switch: Num = 8
-Var aux: Num = 7
+Var aux: Num = 15
 Var color: Num = 1
 Var user: Num = 232
 Var piece: Num = 32
@@ -19,21 +21,59 @@ Var b: NumArray(64) = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 33,
 Var c: NumArray(33) = 6200, 6300, 6400, 6600, 6500, 6400, 6300, 6200, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6200, 6300, 6400, 6600, 6500, 6400, 6300, 6200, 6700
 Var d: NumArray(64) = 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1
 Var e: NumArray(33) = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7
-Var i: NumFOR = 33, 32, 1, 7530, 2
+Var t: NumArray(2) = 299, 299
+Var i: NumFOR = 15, 14, 1, 5210, 2
 Var z: NumFOR = 65536, 65535, 1, 8001, 3
 Var s: NumFOR = 65, 64, 1, 6010, 2
+Var f$: StrArray(40, 2, 4) = "................................................................................................................................................................................................................................................................................................................................"
 
 # End Run-time Variables
 
+   5 CLS : BORDER 0
   10 REM data model
   20 GO SUB 7000
   30 REM graphics
   40 GO SUB 8000
+  50 REM HUD display
+  60 GO SUB 5000: GO SUB 5020: GO SUB 5100: GO SUB 5200
+  70 REM board display
+  80 GO SUB 6000
+ 100 REM main loop
+ 110 PRINT AT 19,5;"CHOOSE AN OPTION"
+4999 STOP
+5000 REM HUD display
+5011 PRINT AT 21,0; INVERSE 1;"N"; INVERSE 0;"-NEW GAME ";
+5012 PRINT INVERSE 1;"R"; INVERSE 0;"-RESIGN ";
+5013 PRINT INVERSE 1;"T"; INVERSE 0;"-DRAW ";
+5014 PRINT INVERSE 1;"Q"; INVERSE 0;"-END"
+5015 RETURN
+5019 REM clocks
+5020 PRINT AT 1,19;"white": PRINT AT 2,19;t(1): PRINT AT 1,25;"black": PRINT AT 2,25;t(2)
+5030 LET t(1)=t(1)-1: LET t(2)=t(2)-1
+5040 IF t(1)=0 THEN STOP
+5050 IF t(1)=0 THEN STOP
+5060 RETURN
+5100 REM print coordinates
+5110 LET aux=8: FOR i=1 TO 16 STEP 2
+5120 PRINT AT i+1,0;aux
+5125 LET aux=aux-1
+5130 NEXT i
+5140 LET aux=65: FOR i=1 TO 16 STEP 2
+5150 PRINT AT 17,i;CHR$ (aux)
+5160 LET aux=aux+1
+5170 NEXT i
+5180 RETURN
+5200 REM print moves
+5201 LET aux=findex-14
+5202 IF aux<1 THEN LET aux=1
+5210 FOR i=1 TO 14
+5220 PRINT AT 3+i,18;aux;". ";f$(aux,1);" ";f$(aux,2): LET aux=aux+1
+5230 NEXT i
+5240 RETURN
 6000 REM drawing board
-6005 CLS : BORDER 0
 6010 FOR s=1 TO 64
-6020 LET x=a(s,1)
-6030 LET y=a(s,2)
+6020 LET x=1+a(s,1)
+6030 LET y=1+a(s,2)
 6040 LET piece=b(s)
 6050 LET drawing=c(piece)
 6051 LET scolor=d(s)
@@ -42,7 +82,7 @@ Var s: NumFOR = 65, 64, 1, 6010, 2
 6054 LET fg=e(piece)
 6060 GO SUB drawing
 6070 NEXT s
-6090 STOP
+6090 RETURN
 6100 REM drawing pawn
 6110 PRINT AT y+0,x; PAPER bg; INK fg;"\a\b"
 6120 PRINT AT y+1,x; PAPER bg; INK fg;"\c\d"
@@ -81,6 +121,13 @@ Var s: NumFOR = 65, 64, 1, 6010, 2
 7070 DIM d(64)
 7071 REM piece_color
 7072 DIM e(33)
+7073 REM game variables
+7074 LET turn=1: DIM t(2): LET t(1)=300: LET t(2)=300: LET findex=1
+7075 REM moves
+7076 DIM f$(40,2,4)
+7077 FOR i=1 TO 40
+7078 LET f$(i,1)="....": LET f$(i,2)="...."
+7079 NEXT i
 7100 FOR i=1 TO 64
 7110 LET y=(INT ((i-1)/8))*2
 7120 LET x=((i-1)-(INT ((i-1)/8)*8))*2
