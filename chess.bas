@@ -1,44 +1,95 @@
-Check C7A17DA1
+Check E018D43C
 Auto 8224
 
 # Run-time Variables
 
-Var user: Num = 0
-Var z: NumFOR = 65456, 65535, 1, 8001, 3
+Var y: Num = 7
+Var x: Num = 9
+Var user: Num = 232
+Var turn: Num = 0
+Var moves: Num = 1
+Var color: Num = 0
+Var t1: Num = 146.06
+Var min: Num = 0
+Var sec: Num = 0
+Var aux: Num = 9
+Var start: Num = 1
+Var index: Num = 0
+Var aux2: Num = 9
+Var piece: Num = 21
+Var drawing: Num = 6100
+Var scolor: Num = 0
+Var bg: Num = 5
+Var fg: Num = 0
+Var t2: Num = 146.06
+Var cindex: Num = 5
+Var lindex: Num = 5
+Var s1: Num = 53
+Var prev: Num = 21
+Var s2: Num = 37
+Var a: NumArray(64, 2) = 0, 14, 2, 14, 4, 14, 6, 14, 8, 14, 10, 14, 12, 14, 14, 14, 0, 12, 2, 12, 4, 12, 6, 12, 8, 12, 10, 12, 12, 12, 14, 12, 0, 10, 2, 10, 4, 10, 6, 10, 8, 10, 10, 10, 12, 10, 14, 10, 0, 8, 2, 8, 4, 8, 6, 8, 8, 8, 10, 8, 12, 8, 14, 8, 0, 6, 2, 6, 4, 6, 6, 6, 8, 6, 10, 6, 12, 6, 14, 6, 0, 4, 2, 4, 4, 4, 6, 4, 8, 4, 10, 4, 12, 4, 14, 4, 0, 2, 2, 2, 4, 2, 6, 2, 8, 2, 10, 2, 12, 2, 14, 2, 0, 0, 2, 0, 4, 0, 6, 0, 8, 0, 10, 0, 12, 0, 14, 0
+Var b: NumArray(64) = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 33, 14, 15, 16, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 13, 33, 33, 33, 33, 33, 33, 33, 21, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 17, 18, 19, 20, 33, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+Var c: NumArray(33) = 6200, 6300, 6400, 6600, 6500, 6400, 6300, 6200, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6100, 6200, 6300, 6400, 6600, 6500, 6400, 6300, 6200, 6700
+Var d: NumArray(64) = 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0
+Var e: NumArray(33) = 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7
+Var t: NumArray(2) = 121, 0
+Var z: NumFOR = 65536, 65535, 1, 8001, 3
+Var i: NumFOR = 15, 14, 1, 5210, 2
+Var s: NumFOR = 65, 64, 1, 6010, 2
+Var f$: Str = "E2E4E7E5"
+Var g$: Str = "E2E4E7E5"
+Var z$: Str = ""
+Var x$: Str = "p"
 
 # End Run-time Variables
 
    5 CLS : BORDER 0
+   6 DEF FN t()=INT ((65536*PEEK 23674+256*PEEK 23673+PEEK 23672)/50)
   10 REM UDG graphics
   20 GO SUB 8000
   30 REM data model
   40 GO SUB 7000
   50 REM HUD display
-  60 GO SUB 5000: GO SUB 5020: GO SUB 5100: GO SUB 5200
+  60 GO SUB 5000: REM print bottom line
+  61 LET t1=FN t(): GO SUB 5020: REM clocks
+  62 GO SUB 5100: REM print board coords
+  63 GO SUB 5200: REM print moves table
   70 REM board display
   80 GO SUB 6000
   90 REM server mode
  100 GO SUB 9000
+ 104 REM ***************
  105 REM main loop
+ 106 REM ***************
  110 PRINT AT 19,5; FLASH 1;"WAITING FOR A CLIENT"; FLASH 0
- 120 LET z$=INKEY$: IF z$<>"p" AND z$<>"P" AND z$<>"n" AND z$<>"N" AND z$<>"z" AND z$<>"Z" THEN GO TO 120
- 130 IF z$="q" OR z$="Q" THEN STOP
- 140 IF z$="n" OR z$="N" THEN CLS : GO TO 30
- 150 IF z$="z" OR z$="Z" THEN GO SUB 9500
- 200 INPUT "MOVE: "; LINE z$
+ 115 LET z$=""
+ 120 LET x$=INKEY$
+ 121 LET t2=FN t()
+ 122 IF t2>t1 THEN GO SUB 5020: LET t1=t2
+ 130 IF x$="p" OR x$="P" THEN GO SUB 4000
+ 140 IF x$="n" OR x$="N" THEN CLS : GO TO 30
+ 150 IF x$="z" OR x$="Z" THEN GO SUB 9500
+ 198 REM read moves in z$
+ 200 PRINT #0;AT 1,0;"MOVE: ";z$,,
+ 202 IF x$=CHR$ 12 AND LEN z$>0 THEN LET z$=z$( TO LEN z$-1): GO TO 120
+ 203 IF x$<>CHR$ 13 THEN LET z$=z$+x$: GO TO 120
+ 204 IF x$="" THEN GO TO 120
  205 REM verifies input
- 210 IF LEN z$<>4 THEN PRINT AT 0,0;LEN z$: BEEP 0.5,1: GO TO 200
+ 210 IF LEN z$<>4 THEN PRINT AT 0,0;LEN z$: BEEP 0.5,1: GO TO 115
  215 IF  CODE (z$(1))>=97 AND  CODE (z$(1))<=104 THEN LET z$(1)=CHR$ ( CODE (z$(1))-32)
  216 IF  CODE (z$(3))>=97 AND  CODE (z$(3))<=104 THEN LET z$(3)=CHR$ ( CODE (z$(3))-32)
- 220 IF  CODE (z$(1))<65 OR  CODE (z$(1))>72 THEN BEEP 0.5,1: GO TO 200
- 230 IF  CODE (z$(3))<65 OR  CODE (z$(3))>72 THEN BEEP 0.5,1: GO TO 200
- 240 IF  CODE (z$(2))<49 OR  CODE (z$(2))>56 THEN BEEP 0.5,1: GO TO 200
- 250 IF  CODE (z$(4))<49 OR  CODE (z$(4))>56 THEN BEEP 0.5,1: GO TO 200
+ 220 IF  CODE (z$(1))<65 OR  CODE (z$(1))>72 THEN BEEP 0.5,1: GO TO 115
+ 230 IF  CODE (z$(3))<65 OR  CODE (z$(3))>72 THEN BEEP 0.5,1: GO TO 115
+ 240 IF  CODE (z$(2))<49 OR  CODE (z$(2))>56 THEN BEEP 0.5,1: GO TO 115
+ 250 IF  CODE (z$(4))<49 OR  CODE (z$(4))>56 THEN BEEP 0.5,1: GO TO 115
  255 REM saves move and applies it to the board
  260 LET f$=f$+z$: LET moves=moves+0.5
  270 GO SUB 5200
  280 GO SUB 5300
- 290 GO SUB 200
+ 285 LET turn=(0 AND turn=1)+(1 AND turn=0)
+ 290 GO TO 115
+4000 REM help
+4010 RETURN
 4999 STOP
 5000 REM HUD display
 5011 PRINT AT 21,3; INVERSE 1;"N"; INVERSE 0;"-NEW GAME ";
@@ -46,10 +97,22 @@ Var z: NumFOR = 65456, 65535, 1, 8001, 3
 5014 PRINT INVERSE 1;"P"; INVERSE 0;"-HELP"
 5015 RETURN
 5019 REM clocks
-5020 PRINT AT 1,19;"white": PRINT AT 2,19;t(1): PRINT AT 1,25;"black": PRINT AT 2,25;t(2)
-5030 LET t(1)=t(1)-1: LET t(2)=t(2)-1
-5040 IF t(1)=0 THEN STOP
-5050 IF t(1)=0 THEN STOP
+5020 LET min=INT (t(1)/60): LET sec=t(1)-min*60
+5021 IF turn=0 THEN INVERSE 1
+5022 PRINT AT 1,19;"white": PRINT AT 2,19;
+5023 IF min<10 THEN PRINT "0";
+5024 PRINT min;":";
+5026 IF sec<10 THEN PRINT "0";
+5028 PRINT sec: INVERSE 0
+5030 LET min=INT (t(2)/60): LET sec=t(2)-min*60
+5031 IF turn=1 THEN INVERSE 1
+5032 PRINT AT 1,25;"black": PRINT AT 2,25;
+5034 IF min<10 THEN PRINT "0";
+5035 PRINT min;":";
+5036 IF sec<10 THEN PRINT "0";
+5038 PRINT sec: INVERSE 0
+5040 IF turn=0 THEN LET t(1)=t(1)+1
+5050 IF turn=1 THEN LET t(2)=t(2)+1
 5060 RETURN
 5100 REM print coordinates
 5110 LET aux=8: FOR i=1 TO 16 STEP 2
@@ -61,7 +124,7 @@ Var z: NumFOR = 65456, 65535, 1, 8001, 3
 5160 LET aux=aux+1
 5170 NEXT i
 5180 RETURN
-5200 REM print moves 14*2*4-1=111
+5200 REM print moves table (14*2*4-1=111)
 5201 LET start=LEN f$-111: LET index=INT (moves-13.5)
 5202 IF start<=0 THEN LET start=1
 5203 IF index<0 THEN LET index=0
@@ -95,6 +158,9 @@ Var z: NumFOR = 65456, 65535, 1, 8001, 3
 5480 LET fg=e(piece)
 5490 GO SUB drawing
 5495 RETURN
+5500 REM read input non blocking
+5510 PRINT #0;"MOVES :";z$
+5999 RETURN
 6000 REM drawing board
 6010 FOR s=1 TO 64
 6020 LET x=1+a(s,1)
@@ -147,7 +213,7 @@ Var z: NumFOR = 65456, 65535, 1, 8001, 3
 7071 REM piece_color
 7072 DIM e(33)
 7073 REM game variables
-7074 LET turn=1: DIM t(2): LET t(1)=300: LET t(2)=300: LET f$="": LET moves=0
+7074 LET turn=0: DIM t(2): LET t(1)=0: LET t(2)=0: LET f$="": LET moves=0
 7080 LET color=0
 7100 FOR i=1 TO 64
 7110 LET y=14-(INT ((i-1)/8))*2
