@@ -1,4 +1,4 @@
-    5 CLS : BORDER 7
+    5 CLS : BORDER 7:%close #4:%close #5
     6 DEF FN t$(n)=" "(1 TO n<10)+STR$ (n)
     7 PRINT AT 11,8;"INITIALIZING UDGs ";AT 12,10;"PLEASE WAIT..."
    10 REM UDG graphics
@@ -12,8 +12,6 @@
    63 GO SUB 5200: REM print moves table
    70 REM board display
    80 GO SUB 6000
-   90 REM server mode
-  100 GO SUB 9000
   104 REM ***************
   105 REM main loop
   106 REM ***************
@@ -25,12 +23,13 @@
   122 IF ABS (t2-t1)>=50 THEN GO SUB 5020: LET t1=t2
   123 IF player<>turn THEN PRINT #5;"p": INPUT #5;j;j$
   124 IF j$="disconn" THEN GO TO 9200
-  125 IF j=4 AND j$="recv" THEN INPUT #4;z$: GO TO 202
+  125 IF j=4 AND j$="recv" THEN INPUT #4;z$: GO TO 256
   129 IF x$="" THEN GO TO 120
   130 IF x$="r" OR x$="R" THEN GO TO 4000: REM resign
   140 IF x$="n" OR x$="N" THEN CLS : GO TO 30
   150 IF x$="t" OR x$="t" THEN GO TO 4200: REM ask for a draw
   155 IF x$="q" OR x$="Q" THEN STOP 
+  156 IF player<>turn THEN GO TO 115
   198 REM read moves in z$
   202 IF x$=CHR$ 12 AND LEN z$>0 THEN LET z$=z$( TO LEN z$-1): PRINT #0;AT 1,0;"MOVE: ";z$,: GO TO 120
   203 IF x$=CHR$ 12 AND LEN z$=0 THEN GO TO 120
@@ -38,25 +37,35 @@
   205 IF player=turn THEN PRINT #0;AT 1,0;"MOVE: ";,
   209 REM verifies input
   210 IF LEN z$<>4 AND z$<>"0-0" AND z$<>"0-0-0" THEN BEEP 0.5,1: GO TO 115
-  211 IF z$="0-0" THEN GO TO 4500
-  212 IF z$="0-0-0" THEN GO TO 4700
   215 IF CODE (z$(1))>=97 AND CODE (z$(1))<=104 THEN LET z$(1)=CHR$ (CODE (z$(1))-32)
   216 IF CODE (z$(3))>=97 AND CODE (z$(3))<=104 THEN LET z$(3)=CHR$ (CODE (z$(3))-32)
   220 IF CODE (z$(1))<65 OR CODE (z$(1))>72 THEN BEEP 0.5,1: GO TO 115
   230 IF CODE (z$(3))<65 OR CODE (z$(3))>72 THEN BEEP 0.5,1: GO TO 115
   240 IF CODE (z$(2))<49 OR CODE (z$(2))>56 THEN BEEP 0.5,1: GO TO 115
   250 IF CODE (z$(4))<49 OR CODE (z$(4))>56 THEN BEEP 0.5,1: GO TO 115
-  255 REM saves move and applies it to the board
+  251 REM saves move and applies it to the board
+  252 IF z$="RESIGN" THEN PRINT AT 19,5;"PEER RESIGNED. GAME OVER": PAUSE 0: CLS : GO TO 30
+  253 IF z$="DRAW" THEN PRINT AT 19,5;"PEER WANTS DRAW...": INPUT "ACCEPT ? (Y/N)"; LINE x$
+  254 IF z$="DRAW" AND (x$="y" OR x$="Y") THEN PRINT #4;"Y": PRINT AT 19,5;"DRAW ACCEPTED. GAME OVER":%close #4:%close #5: PAUSE 0: CLS : GO TO 30
+  255 IF z$="DRAW" AND (x$="n" OR x$="N") THEN PRINT #4;"N": PRINT AT 19,5;"DRAW REFUSED. PLAYING...": GO TO 115
+  256 IF z$="DRAW" THEN GO TO 253
+  258 IF z$="0-0" THEN GO TO 4500
+  259 IF z$="0-0-0" THEN GO TO 4700
   260 LET f$=f$+z$+" ": LET moves=moves+0.5
   270 GO SUB 5200: REM print moves table
   280 GO SUB 5300: REM Apply move on the board
   281 BEEP 0.1,20: BEEP 0.1,22: BEEP 0.1,25
+  282 IF player=turn THEN PRINT #4;z$
   285 LET turn=(0 AND turn=1)+(1 AND turn=0)
   290 GO TO 115
  4000 REM Resign
- 4010 STOP 
+ 4010 PRINT #4;"RESIGN":%close #4:%close #5
+ 4020 PRINT AT 19,5;"YOU RESIGN. GAME OVER": PAUSE 0: CLS : GO TO 30
  4200 REM Ask for a draw
- 4210 STOP 
+ 4210 PRINT #4;"DRAW"
+ 4220 INPUT #4;z$
+ 4230 IF z$="Y" THEN PRINT AT 19,5;"DRAW ACEPTED. GAME OVER": PAUSE 0: CLS : GO TO 30
+ 4240 IF z$="N" THEN PRINT AT 19,5;"DRAW REFUSED. PLAYING...": GO TO 156
  4500 REM Apply 0-0 on the board
  4510 LET f$=f$+z$+"  "
  4520 LET moves=moves+0.5
@@ -228,7 +237,7 @@
  9001 REM ******************
  9005 PRINT AT 19,5; FLASH 1;"CONNECTING WITH PROXY"; FLASH 0
  9006 INPUT "CHOOSE WHITE OR BLACK (W/B): "; LINE z$
- 9007 IF z$="w" OR  z$="W" THEN LET port=2500: LET playe=0: GO TO 9010
+ 9007 IF z$="w" OR  z$="W" THEN LET port=2500: LET player=0: GO TO 9010
  9008 IF z$="b" OR z$="B" THEN LET port=2501: LET player=1: GO TO 9010
  9009 GO TO 9006
  9010 %connect #4,"tuxe.es",port
@@ -237,8 +246,9 @@
  9040 %control #5
  9050 PRINT #5;"p": INPUT #5;j;j$
  9060 IF j$="disconn" THEN GO TO 9200
- 9070 IF j=4 AND j$="recv" THEN INPUT #4;z$: IF z$="ping" THEN PRINT AT 19,5;"PLAYING",: RETURN 
+ 9070 IF j=4 AND j$="recv" THEN INPUT #4;z$: IF z$="ping" THEN PRINT AT 19,5;"PLAYING...",,: RETURN 
  9080 LET z$=INKEY$
- 9090 IF z$="n" OR z$="N" THEN %close #4: GO TO 30
+ 9090 IF z$="n" OR z$="N" THEN %close #4: CLS : GO TO 30
+ 9095 IF z$="q" OR z$="Q" THEN %close #4: STOP 
  9100 GO TO 9050
  9200 %close #4: PRINT AT 19,5;"REMOTE LOST CONNECTION": RETURN  
