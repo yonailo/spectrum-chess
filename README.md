@@ -1,6 +1,6 @@
 ## Spectra-chess
 
-This a BASIC game for the ZX Spectrum that allows to play chess using the Spectranet interface.
+This is a simple BASIC game for the ZX Spectrum that allows to play chess using the Spectranet interface.
 
 It works using a proxy like this on an public internet server:
 
