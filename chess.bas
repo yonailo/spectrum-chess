@@ -13,7 +13,7 @@
    70 REM board display
    80 GO SUB 6000
   104 REM ***************
-  105 REM main loop
+  105 REM begin main loop
   106 REM ***************
   110 GO TO 9000: REM proxy connection
   115 LET z$=""
@@ -46,7 +46,7 @@
   251 REM saves move and applies it to the board
   252 IF z$="RESIGN" THEN PRINT AT 19,5;"PEER RESIGNED. GAME OVER": PAUSE 0: CLS : GO TO 30
   253 IF z$="DRAW" THEN PRINT AT 19,5;"PEER WANTS DRAW...": INPUT "ACCEPT ? (Y/N)"; LINE x$
-  254 IF z$="DRAW" AND (x$="y" OR x$="Y") THEN PRINT #4;"Y": PRINT AT 19,5;"DRAW ACCEPTED. GAME OVER":%close #4:%close #5: PAUSE 0: CLS : GO TO 30
+  254 IF z$="DRAW" AND (x$="y" OR x$="Y") THEN PRINT #4;"Y": PRINT AT 19,5;"DRAW ACCEPTED. GAME OVER":%close #4: PAUSE 0: CLS : GO TO 30
   255 IF z$="DRAW" AND (x$="n" OR x$="N") THEN PRINT #4;"N": PRINT AT 19,5;"DRAW REFUSED. PLAYING...": GO TO 115
   256 IF z$="DRAW" THEN GO TO 253
   258 IF z$="0-0" THEN GO TO 4500
@@ -58,15 +58,25 @@
   282 IF player=turn THEN PRINT #4;z$
   285 LET turn=(0 AND turn=1)+(1 AND turn=0)
   290 GO TO 115
+  291 REM ***************
+  292 REM end main loop
+  293 REM ***************
+ 3998 REM 
+ 3999 REM ***************
  4000 REM Resign
- 4010 PRINT #4;"RESIGN":%close #4:%close #5
+ 4001 REM ***************
+ 4010 PRINT #4;"RESIGN":%close #4
  4020 PRINT AT 19,5;"YOU RESIGN. GAME OVER": PAUSE 0: CLS : GO TO 30
+ 4199 REM ***************
  4200 REM Ask for a draw
+ 4201 REM ***************
  4210 PRINT #4;"DRAW"
  4220 INPUT #4;z$
  4230 IF z$="Y" THEN PRINT AT 19,5;"DRAW ACEPTED. GAME OVER": PAUSE 0: CLS : GO TO 30
  4240 IF z$="N" THEN PRINT AT 19,5;"DRAW REFUSED. PLAYING...": GO TO 115
+ 4499 REM **********************
  4500 REM Apply 0-0 on the board
+ 4501 REM **********************
  4510 LET f$=f$+z$+"  "
  4520 LET moves=moves+0.5
  4530 GO SUB 5200: REM print moves table
@@ -75,7 +85,9 @@
  4560 BEEP 0.1,20: BEEP 0.1,22: BEEP 0.1,25
  4570 LET turn=(0 AND turn=1)+(1 AND turn=0)
  4580 GO TO 115
+ 4699 REM ************************
  4700 REM Apply 0-0-0 on the board
+ 4701 REM ************************
  4710 LET f$=f$+z$
  4720 LET moves=moves+0.5
  4730 GO SUB 5200: REM print moves table
@@ -84,14 +96,17 @@
  4760 BEEP 0.1,20: BEEP 0.1,22: BEEP 0.1,25
  4770 LET turn=(0 AND turn=1)+(1 AND turn=0)
  4780 GO TO 115
- 4999 STOP 
+ 4999 REM ***************
  5000 REM HUD display
+ 5001 REM ***************
  5011 PRINT AT 21,0; INVERSE 1;"N"; INVERSE 0;"-NEW GAME ";
  5012 PRINT INVERSE 1;"R"; INVERSE 0;"-RESIGN ";
  5013 PRINT INVERSE 1;"T"; INVERSE 0;"-DRAW ";
  5014 PRINT INVERSE 1;"Q"; INVERSE 0;"-END"
  5015 RETURN 
- 5020 REM clocks
+ 5018 REM ***************
+ 5019 REM clocks
+ 5020 REM ***************
  5021 IF turn=0 THEN INVERSE 1
  5022 PRINT AT 1,21;"White": PRINT AT 2,21;
  5023 IF min1<10 THEN PRINT "0";
@@ -109,7 +124,9 @@
  5055 IF sec1=60 THEN LET sec1=0: LET min1=min1+1
  5056 IF sec2=60 THEN LET sec2=0: LET min2=min2+1
  5060 RETURN 
+ 5099 REM ***************
  5100 REM print coordinates
+ 5101 REM ***************
  5110 LET aux=8: FOR i=1 TO 16 STEP 2
  5120 PRINT AT i+1,0;aux
  5125 LET aux=aux-1
@@ -119,7 +136,10 @@
  5160 LET aux=aux+1
  5170 NEXT i
  5180 RETURN 
- 5200 REM print moves table (14*2*5-1=139)
+ 5197 REM *****************
+ 5198 REM print annotations
+ 5199 REM (14*2*5-1=139)
+ 5200 REM *****************
  5201 LET start=LEN f$-139: LET index=INT (moves-13.5)
  5202 IF start<=0 THEN LET start=1
  5203 IF index<0 THEN LET index=0
@@ -153,9 +173,6 @@
  5455 IF piece<=16 THEN LET fg=2
  5490 GO SUB 6055: REM draws piece at destination square
  5495 RETURN 
- 5500 REM read input non blocking
- 5510 PRINT #0;"MOVES :";z$
- 5998 RETURN 
  5999 REM **********************
  6000 REM draws the whole board
  6001 REM **********************
