@@ -1,4 +1,4 @@
-    5 CLS : BORDER 7:%close #4:%close #5
+    5 CLS : BORDER 7
     6 DEF FN t$(n)=" "(1 TO n<10)+STR$ (n)
     7 PRINT AT 11,8;"INITIALIZING UDGs ";AT 12,10;"PLEASE WAIT..."
    10 REM UDG graphics
@@ -15,15 +15,15 @@
   104 REM ***************
   105 REM main loop
   106 REM ***************
-  110 GO SUB 9000: REM proxy connection
-  115 LET z$="": LET j=0: LET j$=""
+  110 GO TO 9000: REM proxy connection
+  115 LET z$=""
   116 IF player=turn THEN PRINT #0;AT 1,0;"MOVE: ";z$,,
   120 LET x$=INKEY$
   121 LET t2=PEEK 23672
   122 IF ABS (t2-t1)>=50 THEN GO SUB 5020: LET t1=t2
   123 IF player<>turn THEN PRINT #5;"p": INPUT #5;j;j$
-  124 IF j$="disconn" THEN GO TO 9200
-  125 IF j=4 AND j$="recv" THEN INPUT #4;z$: GO TO 256
+  124 IF player<>turn AND j$="disconn" THEN GO TO 9200
+  125 IF player<>turn AND j=4 AND j$="recv" THEN INPUT #4;z$: GO TO 252
   129 IF x$="" THEN GO TO 120
   130 IF x$="r" OR x$="R" THEN GO TO 4000: REM resign
   140 IF x$="n" OR x$="N" THEN CLS : GO TO 30
@@ -65,7 +65,7 @@
  4210 PRINT #4;"DRAW"
  4220 INPUT #4;z$
  4230 IF z$="Y" THEN PRINT AT 19,5;"DRAW ACEPTED. GAME OVER": PAUSE 0: CLS : GO TO 30
- 4240 IF z$="N" THEN PRINT AT 19,5;"DRAW REFUSED. PLAYING...": GO TO 156
+ 4240 IF z$="N" THEN PRINT AT 19,5;"DRAW REFUSED. PLAYING...": GO TO 115
  4500 REM Apply 0-0 on the board
  4510 LET f$=f$+z$+"  "
  4520 LET moves=moves+0.5
@@ -246,9 +246,9 @@
  9040 %control #5
  9050 PRINT #5;"p": INPUT #5;j;j$
  9060 IF j$="disconn" THEN GO TO 9200
- 9070 IF j=4 AND j$="recv" THEN INPUT #4;z$: IF z$="ping" THEN PRINT AT 19,5;"PLAYING...",,: RETURN 
+ 9070 IF j=4 AND j$="recv" THEN INPUT #4;z$: IF z$="ping" THEN PRINT AT 19,5;"PLAYING...",,: GO TO 115
  9080 LET z$=INKEY$
  9090 IF z$="n" OR z$="N" THEN %close #4: CLS : GO TO 30
  9095 IF z$="q" OR z$="Q" THEN %close #4: STOP 
  9100 GO TO 9050
- 9200 %close #4: PRINT AT 19,5;"REMOTE LOST CONNECTION": RETURN  
+ 9200 %close #4: PRINT AT 19,5;"REMOTE LOST CONNECTION": PAUSE 0: CLS : GO TO 30 
